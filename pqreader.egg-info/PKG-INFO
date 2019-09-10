@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: pqreader
+Version: 0.0.1
+Summary: Package for reading files from PicoQuant TimeHarp 200
+Home-page: https://github.com/molecular-nanophotonics/pqreader
+Author: Martin
+Author-email: martin.fraenzl@physik.uni-leipzig.de
+License: UNKNOWN
+Description: # PicoQuant-Reader
+        Module for reading files from PicoQuant TimeHarp 200 in Python
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
