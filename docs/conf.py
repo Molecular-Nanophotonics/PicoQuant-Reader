@@ -14,9 +14,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../pqreader'))
-
-import sphinx_rtd_theme
+sys.path.insert(0, os.path.abspath('../pqreader/'))
 
 
 # -- Project information -----------------------------------------------------
@@ -45,6 +43,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages',
 	'sphinx_rtd_theme',
 ]
 
