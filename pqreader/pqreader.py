@@ -135,7 +135,7 @@ def read_header(f):
 
 def t3r_reader(filename):
     """
-    Load raw T3 records and metadata from a T3R file.
+    Read processed T3 records from a T3R file.
     
     Arguments:
         filename (string): the path of the .t3r file to be read.
@@ -175,19 +175,26 @@ def t3r_reader(filename):
         metadata.update({'timetag_unit':  100e-9,
                          'nanotime_unit': metadata['hardware']['Resolution']*1e-9})
     
-        # The remainings are all T3 records
+        # The remainings are all T3R records
         t3records = np.fromfile(f, dtype='uint32', count=ttmode['NumberOfRecords'][0])
      
         # Process the T3R record
-        detectors, timetags, nanotimes = process_t3records(t3records)
+        route, timetags, data = process_t3records(t3records)
     
-        return timetags, detectors, nanotimes, metadata   
-
+        return route, timetags, data, metadata   
 
 
 def process_t3records(t3records):
     """
     Decode t3records from .T3R files.
+    
+    Arguments:
+        t3records (int32 array): T3 records 
+    Returns:
+        timetags: 
+        route:
+        data: 
+        metadata: 
     """
     #reserved_bits = 1
     valid_bits = 1
@@ -218,5 +225,51 @@ def correct_overflow(timetags, valid, overflow):
     for i, (idx1, idx2) in enumerate(zip(overflow_idx[:-1], overflow_idx[1:])):
         timetags[idx1:idx2] += (i + 1)*overflow
     timetags[idx2:] += (i + 2)*overflow
+
+
+
+
+def t3r_records(filename):
+    """
+    Read the raw T3 records and metadata from a T3R file.
+    """
+    with open(filename, 'rb') as f:
+        
+        # Read the header common to all file types
+        metadata = read_header(f)
+        
+        # Time tagging mode specific header
+        ttmode_dtypes = np.dtype([
+                ('TTTRGlobclock',    'int32' ),
+                ('ExtDevices',       'int32' ),
+                ('Reserved1',        'int32' ),
+                ('Reserved2',        'int32' ),
+                ('Reserved3',        'int32' ),
+                ('Reserved4',        'int32' ),
+                ('Reserved5',        'int32' ),
+                ('SyncRate',         'int32' ),
+                ('AverageCFDRate',   'int32' ),
+                ('StopAfter',        'int32' ),
+                ('StopReason',       'int32' ),
+                ('NumberOfRecords',  'int32' ),
+                ('SpecHeaderLength', 'int32' )])
+        ttmode = np.fromfile(f, ttmode_dtypes, count=1)
+
+        # Special header for imaging
+        imgheader = np.fromfile(f, dtype='int32', count=ttmode['SpecHeaderLength'][0])
+
+        metadata.update(dict(ttmode = ttmode,
+                             imgheader = imgheader))
+        
+        metadata.update({'timetag_unit':  100e-9,
+                         'nanotime_unit': metadata['hardware']['Resolution']*1e-9})
+    
+        # The remainings are all T3 records
+        t3records = np.fromfile(f, dtype='uint32', count=ttmode['NumberOfRecords'][0])
+        
+        return t3records, metadata 
+
+
+
 
 
