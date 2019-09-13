@@ -1,8 +1,0 @@
-README.md
-setup.py
-pqreader/__init__.py
-pqreader/pqreader.py
-pqreader.egg-info/PKG-INFO
-pqreader.egg-info/SOURCES.txt
-pqreader.egg-info/dependency_links.txt
-pqreader.egg-info/top_level.txt
