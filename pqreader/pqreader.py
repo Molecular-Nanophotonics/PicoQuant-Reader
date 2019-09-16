@@ -10,7 +10,14 @@ import numpy as np
 
 def thd_reader(filename):
     """
-    Load data from a PicoQuant .thd file.
+    Read data from a PicoQuant .thd file.
+    
+    Arguments:
+        filename (string): The path of the .thd file to be read.
+    Returns:
+        hist (int32 array): The historgram data. \n
+        bins (int32 array): The time bins. \n
+        metadata (dict): A dictionary containing the metadata. 
     """
     with open(filename, 'rb') as f:
 
@@ -48,7 +55,7 @@ def thd_reader(filename):
 
         metadata.update(dict(intmode=intmode))
          
-        # The remainings are all T3 records
+        # ...
         hist = np.fromfile(f, dtype='uint32', count=4096)
         bins = 1e-9*intmode['Resolution']*np.arange(0, 4096)
         
@@ -110,7 +117,7 @@ def read_header(f):
             ('ScriptName',      'S20'  )])
     repeat = np.fromfile(f, repeat_dtypes, count=1)
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # --------------------------------------------------
     # Hardware information header
     hardware_dtypes = np.dtype([
             ('HardwareIdent',       'S16'  ),
@@ -135,14 +142,15 @@ def read_header(f):
 
 def t3r_reader(filename):
     """
-    Read processed T3 records from a T3R file.
+    Read processed TR3 records from a PicoQuant .t3r file.
     
     Arguments:
-        filename (string): the path of the .t3r file to be read.
+        filename (string): The path of the .t3r file to be read.
     Returns:
-        A tuple of timestamps, detectors, nanotimes (integer arrays) and a
-        dictionary with metadata containing at least the keys
-        'timestamps_unit' and 'nanotimes_unit'.
+        timetags (int64 array): The time-tag of the photon event. \n
+        route (int32 array): The routing channel the photon event came from. \n
+        data (int32 array): The channel number of the photon event (start-stop-timing). \n
+        metadata (dict): A dictionary containing the metadata. 
     """
     with open(filename, 'rb') as f:
         
@@ -179,22 +187,21 @@ def t3r_reader(filename):
         t3records = np.fromfile(f, dtype='uint32', count=ttmode['NumberOfRecords'][0])
      
         # Process the T3R record
-        route, timetags, data = process_t3records(t3records)
+        route, data, timetags = process_t3records(t3records)
     
-        return route, timetags, data, metadata   
+        return route, data, timetags, metadata   
 
 
 def process_t3records(t3records):
     """
-    Decode t3records from .T3R files.
+    Decode 32 bit T3R records from PicoQuant .t3r files.
     
     Arguments:
-        t3records (int32 array): T3 records 
+        t3records (int32 array): T3R records 
     Returns:
-        timetags: 
-        route:
-        data: 
-        metadata: 
+        route (int32 array): The routing channel the photon event came from. \n
+        data (int32 array): The channel number of the photon event (start-stop-timing). \n
+        timetags (int64 array): The time-tag of the photon event. \n
     """
     #reserved_bits = 1
     valid_bits = 1
@@ -208,19 +215,25 @@ def process_t3records(t3records):
     timetags = np.bitwise_and(t3records, 2**timetag_bits - 1).astype('uint64')
     
     # Correct for overflows     
-    correct_overflow(timetags, valid, overflow = 2**timetag_bits)
+    correct_overflow(timetags, valid)
     
-    # Delete overflow events  
+    # Delete overflow events
+    route = np.delete(route, np.where(valid==0)[0])
     data = np.delete(data, np.where(valid==0)[0])
     timetags = np.delete(timetags, np.where(valid==0)[0])
     
-    return route, timetags, data
+    return route, data, timetags
 
 
-def correct_overflow(timetags, valid, overflow):
+def correct_overflow(timetags, valid):
     """
-    Correct timetags for overflow.
+    Correct time-tags for overflow.
+
+    Arguments:
+        timetags (int32 array): time-tags \n
+        valid (int32 array): valid flags \n
     """
+    overflow = 2**16 # 2**timetag_bits
     overflow_idx = np.where(valid==0)[0]
     for i, (idx1, idx2) in enumerate(zip(overflow_idx[:-1], overflow_idx[1:])):
         timetags[idx1:idx2] += (i + 1)*overflow
@@ -231,7 +244,13 @@ def correct_overflow(timetags, valid, overflow):
 
 def t3r_records(filename):
     """
-    Read the raw T3 records and metadata from a T3R file.
+    Read the raw T3 records and metadata from a PicoQuant .t3r file.
+    
+    Arguments:
+        filename (string): The path of the .t3r file to be read.
+    Returns:
+        timetags (int32 array): The raw T3R record from the T3R file. \n
+        metadata (dict): A dictionary containing the metadata. 
     """
     with open(filename, 'rb') as f:
         

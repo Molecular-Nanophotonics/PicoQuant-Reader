@@ -164,34 +164,74 @@
 <p>&#64;author: Martin Fränzl</p>
 <dl class="function">
 <dt id="pqreader.correct_overflow">
-<code class="descclassname">pqreader.</code><code class="descname">correct_overflow</code><span class="sig-paren">(</span><em>timetags</em>, <em>valid</em>, <em>overflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pqreader.html#correct_overflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pqreader.correct_overflow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Correct timetags for overflow.</p>
+<code class="descclassname">pqreader.</code><code class="descname">correct_overflow</code><span class="sig-paren">(</span><em>timetags</em>, <em>valid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pqreader.html#correct_overflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pqreader.correct_overflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correct time-tags for overflow.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><p class="first">timetags (int32 array): time-tags</p>
+<p class="last">valid (int32 array): valid flags</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pqreader.process_t3records">
 <code class="descclassname">pqreader.</code><code class="descname">process_t3records</code><span class="sig-paren">(</span><em>t3records</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pqreader.html#process_t3records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pqreader.process_t3records" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decode t3records from .T3R files.</p>
+<dd><p>Decode 32 bit T3R records from PicoQuant .t3r files.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>t3records (int32 array): T3R records</dd>
+<dt>Returns:</dt>
+<dd><p class="first">route (int32 array): The routing channel the photon event came from.</p>
+<p>data (int32 array): The channel number of the photon event (start-stop-timing).</p>
+<p class="last">timetags (int64 array): The time-tag of the photon event.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pqreader.t3r_reader">
 <code class="descclassname">pqreader.</code><code class="descname">t3r_reader</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pqreader.html#t3r_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pqreader.t3r_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load raw T3 records and metadata from a T3R file.</p>
+<dd><p>Read processed TR3 records from a PicoQuant .t3r file.</p>
 <dl class="docutils">
 <dt>Arguments:</dt>
-<dd>filename (string): the path of the .t3r file to be read.</dd>
+<dd>filename (string): The path of the .t3r file to be read.</dd>
 <dt>Returns:</dt>
-<dd>A tuple of timestamps, detectors, nanotimes (integer arrays) and a
-dictionary with metadata containing at least the keys
-‘timestamps_unit’ and ‘nanotimes_unit’.</dd>
+<dd><p class="first">timetags (int64 array): The time-tag of the photon event.</p>
+<p>route (int32 array): The routing channel the photon event came from.</p>
+<p>data (int32 array): The channel number of the photon event (start-stop-timing).</p>
+<p class="last">metadata (dict): A dictionary containing the metadata.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pqreader.t3r_records">
+<code class="descclassname">pqreader.</code><code class="descname">t3r_records</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pqreader.html#t3r_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pqreader.t3r_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the raw T3 records and metadata from a PicoQuant .t3r file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>filename (string): The path of the .t3r file to be read.</dd>
+<dt>Returns:</dt>
+<dd><p class="first">timetags (int32 array): The raw T3R record from the T3R file.</p>
+<p class="last">metadata (dict): A dictionary containing the metadata.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pqreader.thd_reader">
 <code class="descclassname">pqreader.</code><code class="descname">thd_reader</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pqreader.html#thd_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pqreader.thd_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load data from a PicoQuant .thd file.</p>
+<dd><p>Read data from a PicoQuant .thd file.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>filename (string): The path of the .thd file to be read.</dd>
+<dt>Returns:</dt>
+<dd><p class="first">hist (int32 array): The historgram data.</p>
+<p>bins (int32 array): The time bins.</p>
+<p class="last">metadata (dict): A dictionary containing the metadata.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
