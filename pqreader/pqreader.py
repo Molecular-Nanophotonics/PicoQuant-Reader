@@ -189,7 +189,7 @@ def t3r_reader(filename):
         # Process the T3R record
         route, data, timetags = process_t3records(t3records)
     
-        return route, data, timetags, metadata   
+        return timetags, route, data, metadata   
 
 
 def process_t3records(t3records):

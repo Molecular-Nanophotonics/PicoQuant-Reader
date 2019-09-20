@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="pqreader",
-    version="0.0.2",
+    version="0.0.3",
     author="Martin",
     author_email="martin.fraenzl@physik.uni-leipzig.de",
     description="Package for reading files from PicoQuant TimeHarp 200",
